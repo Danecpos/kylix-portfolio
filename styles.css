@@ -487,8 +487,16 @@ textarea:focus {
   padding: 18px;
 }
 
+.video-work {
+  color: inherit;
+}
+
 .work-item h3 {
   margin-bottom: 10px;
+}
+
+.video-link {
+  margin-top: 18px;
 }
 
 .tag-list {
