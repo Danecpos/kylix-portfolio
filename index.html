@@ -149,22 +149,27 @@
           <p class="eyebrow">Kontakt</p>
           <h2>Domluva na editu nebo designu</h2>
           <p>
-            Sem se doplní tvoje skutečné kontakty. Formulář zatím drží vzhled
-            finální kontaktní části.
+            Napiš, co potřebuješ sestříhat nebo navrhnout. Zpráva mi přijde
+            přímo na e-mail.
           </p>
         </div>
-        <form class="contact-form" action="#" method="post">
+        <form class="contact-form" action="https://formsubmit.co/daniel.petis@seznam.cz" method="post">
+          <input type="hidden" name="_subject" value="Nová zpráva z KYLIX portfolio webu">
+          <input type="hidden" name="_next" value="https://danecpos.github.io/kylix-portfolio/thanks.html">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
           <label>
             Jméno
-            <input type="text" name="name" placeholder="Tvoje jméno">
+            <input type="text" name="name" placeholder="Tvoje jméno" required>
           </label>
           <label>
             E-mail
-            <input type="email" name="email" placeholder="tvuj@email.cz">
+            <input type="email" name="email" placeholder="tvuj@email.cz" required>
           </label>
           <label>
             Zpráva
-            <textarea name="message" rows="4" placeholder="Potřebuju edit / náhledovku..."></textarea>
+            <textarea name="message" rows="4" placeholder="Potřebuju edit / náhledovku..." required></textarea>
           </label>
           <button class="button primary" type="submit">Odeslat zprávu</button>
         </form>

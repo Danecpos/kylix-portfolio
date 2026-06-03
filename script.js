@@ -15,19 +15,13 @@ nav?.querySelectorAll("a").forEach((link) => {
   });
 });
 
-contactForm?.addEventListener("submit", (event) => {
-  event.preventDefault();
+contactForm?.addEventListener("submit", () => {
   const button = contactForm.querySelector("button");
-  const originalText = button.textContent;
 
-  button.textContent = "Zpráva připravena";
-  button.disabled = true;
-
-  setTimeout(() => {
-    button.textContent = originalText;
-    button.disabled = false;
-    contactForm.reset();
-  }, 1800);
+  if (button) {
+    button.textContent = "Odesílám...";
+    button.disabled = true;
+  }
 });
 
 if (scrollFocusCards.length > 0) {
