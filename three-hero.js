@@ -88,10 +88,11 @@ function createHeroScene(canvas, reducedMotion, pointer, scroll) {
     root.rotation.y = -0.18 + Math.sin(t * 0.44) * 0.09 * motion + pointer.x * 0.13 * motion;
     root.rotation.x = -0.02 + Math.sin(t * 0.34) * 0.035 * motion - pointer.y * 0.045 * motion;
     detailGroup.rotation.z = Math.sin(t * 0.28) * 0.025 * motion;
-    kMark.rotation.y = 0.14 + scroll.turn * Math.PI * 1.08 * motion + Math.sin(t * 0.42) * 0.025 * motion;
+    kMark.rotation.y = 0.04 + scroll.turn * Math.PI * 1.02 * motion + Math.sin(t * 0.42) * 0.018 * motion;
     kMark.rotation.x = 0.04 + scroll.turn * 0.18 * motion - pointer.y * 0.05 * motion;
     kMark.rotation.z = -0.03 + pointer.x * 0.035 * motion;
     kMark.position.y = Math.sin(t * 0.65) * 0.07 * motion;
+    animateKMark(kMark, t, motion);
 
     mediaGroup.children.forEach((panel, index) => {
       panel.position.y += Math.sin(t * 0.75 + index * 0.9) * 0.0009 * motion;
@@ -128,166 +129,131 @@ function createHeroScene(canvas, reducedMotion, pointer, scroll) {
 function buildKMark(sceneName) {
   const group = new THREE.Group();
   const compact = sceneName !== "home";
-
-  const blackChrome = new THREE.MeshPhysicalMaterial({
-    color: 0x130708,
-    clearcoat: 1,
-    clearcoatRoughness: 0.12,
-    emissive: 0x3a0506,
-    emissiveIntensity: 0.58,
-    metalness: 0.74,
-    roughness: 0.14,
-  });
-  const redAura = new THREE.MeshPhysicalMaterial({
-    color: 0x8f0507,
-    clearcoat: 1,
-    emissive: 0xff1616,
-    emissiveIntensity: 1.35,
-    metalness: 0.12,
-    opacity: 0.54,
-    roughness: 0.2,
-    transparent: true,
-  });
-  const redGlass = new THREE.MeshPhysicalMaterial({
-    color: 0xff2424,
-    clearcoat: 1,
-    emissive: 0xff1010,
-    emissiveIntensity: 2.15,
-    metalness: 0.2,
-    opacity: 0.78,
-    roughness: 0.16,
-    transparent: true,
-  });
-  const glint = new THREE.MeshBasicMaterial({
-    color: 0xffffff,
-    opacity: 0.45,
-    transparent: true,
-  });
-  const edge = new THREE.LineBasicMaterial({
-    color: 0xff5b5b,
-    transparent: true,
-    opacity: 0.96,
-  });
   const referenceTexture = new THREE.TextureLoader().load("assets/kylix-k-reference-cutout.png");
   referenceTexture.colorSpace = THREE.SRGBColorSpace;
   referenceTexture.anisotropy = 8;
 
-  const addBar = ({ width, height, depth, x, y, z = 0, rz = 0, material, bevel = true }) => {
-    const geometry = new THREE.BoxGeometry(width, height, depth);
-    if (bevel) {
-      bevelBoxGeometry(geometry, width, height, depth);
-    }
-    const mesh = new THREE.Mesh(geometry, material);
-    const outline = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), edge);
-    outline.position.z = 0.006;
-    mesh.add(outline);
-    mesh.position.set(x, y, z);
-    mesh.rotation.z = rz;
-    group.add(mesh);
-    return mesh;
-  };
+  addReferenceKModel(group, referenceTexture);
 
-  addBar({ width: 0.76, height: 3.34, depth: 0.7, x: -0.66, y: 0, z: -0.04, material: redAura });
-  addBar({ width: 0.82, height: 2.48, depth: 0.7, x: 0.1, y: 0.78, z: -0.04, rz: -0.73, material: redAura });
-  addBar({ width: 0.82, height: 2.48, depth: 0.7, x: 0.1, y: -0.78, z: -0.04, rz: 0.73, material: redAura });
-
-  addBar({ width: 0.58, height: 3.18, depth: 0.64, x: -0.66, y: 0, z: 0.04, material: blackChrome });
-  addBar({ width: 0.62, height: 2.3, depth: 0.64, x: 0.08, y: 0.76, z: 0.04, rz: -0.73, material: blackChrome });
-  addBar({ width: 0.62, height: 2.3, depth: 0.64, x: 0.08, y: -0.76, z: 0.04, rz: 0.73, material: blackChrome });
-
-  addBar({ width: 0.3, height: 2.76, depth: 0.76, x: -0.66, y: 0, z: 0.14, material: redGlass });
-  addBar({ width: 0.34, height: 1.98, depth: 0.76, x: 0.03, y: 0.63, z: 0.15, rz: -0.73, material: redGlass });
-  addBar({ width: 0.34, height: 1.98, depth: 0.76, x: 0.03, y: -0.63, z: 0.15, rz: 0.73, material: redGlass });
-
-  addGlint(group, glint, { x: -0.85, y: 1.42, z: 0.5, rz: -0.08, scale: 0.58 });
-  addGlint(group, glint, { x: 0.68, y: 1.28, z: 0.5, rz: -0.72, scale: 0.48 });
-  addGlint(group, glint, { x: 0.78, y: -1.18, z: 0.5, rz: 0.74, scale: 0.4 });
-
-  addShard(group, { x: -0.92, y: 1.45, z: 0.16, rz: -0.34, scale: 0.74 });
-  addShard(group, { x: 0.88, y: 1.32, z: 0.16, rz: 0.46, scale: 0.62 });
-  addShard(group, { x: 0.78, y: -1.34, z: 0.16, rz: -0.5, scale: 0.66 });
-  addShard(group, { x: -0.82, y: -1.45, z: 0.16, rz: 0.4, scale: 0.54 });
-  addReferenceKFace(group, referenceTexture);
-
-  const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(1.85, 0.012, 12, 96),
-    new THREE.MeshBasicMaterial({ color: 0xff2020, transparent: true, opacity: 0.34 })
-  );
-  ring.position.z = -0.38;
-  ring.rotation.x = Math.PI / 2;
-  group.add(ring);
-
-  group.position.set(compact ? 1.05 : 0.42, compact ? 0.1 : -0.04, compact ? 0.48 : 0.82);
-  group.scale.setScalar(compact ? 0.86 : 0.94);
-  group.rotation.set(0.04, -0.28, -0.03);
+  group.position.set(compact ? 1.08 : 0.42, compact ? 0.08 : -0.04, compact ? 0.5 : 0.82);
+  group.scale.setScalar(compact ? 0.9 : 0.96);
+  group.rotation.set(0.035, -0.05, -0.025);
   group.userData.isKMark = true;
 
   return group;
 }
 
-function addReferenceKFace(group, texture) {
-  const width = 3.82;
-  const height = 3.22;
+function addReferenceKModel(group, texture) {
+  const width = 3.96;
+  const height = 3.34;
   const geometry = new THREE.PlaneGeometry(width, height);
-  const layerSettings = [
-    { z: 0.48, x: 0.06, opacity: 0.98, color: 0xffffff, blending: THREE.NormalBlending },
-    { z: 0.34, x: 0.02, opacity: 0.28, color: 0xff2a2a, blending: THREE.AdditiveBlending },
-    { z: 0.2, x: -0.02, opacity: 0.18, color: 0x9a0508, blending: THREE.AdditiveBlending },
-  ];
+  const animatedMaterials = [];
+  const glints = [];
+  const shards = [];
 
-  layerSettings.forEach((layer, index) => {
+  const makeLayer = ({ x = 0, y = 0, z, scale = 1, opacity, color, blending, renderOrder }) => {
     const material = new THREE.MeshBasicMaterial({
       alphaTest: 0.015,
-      blending: layer.blending,
-      color: layer.color,
+      blending,
+      color,
       depthTest: false,
       depthWrite: false,
       map: texture,
-      opacity: layer.opacity,
+      opacity,
       side: THREE.DoubleSide,
       transparent: true,
     });
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(layer.x, -0.02, layer.z);
-    mesh.rotation.set(0.015, -0.025, 0.01);
-    mesh.renderOrder = 30 + index;
+    mesh.position.set(x, y, z);
+    mesh.scale.setScalar(scale);
+    mesh.renderOrder = renderOrder;
+    material.userData.baseOpacity = opacity;
+    animatedMaterials.push(material);
     group.add(mesh);
+    return mesh;
+  };
+
+  makeLayer({ z: -0.62, scale: 1.2, opacity: 0.16, color: 0xff2020, blending: THREE.AdditiveBlending, renderOrder: 18 });
+  makeLayer({ z: -0.5, scale: 1.1, opacity: 0.26, color: 0xff1010, blending: THREE.AdditiveBlending, renderOrder: 19 });
+
+  for (let index = 0; index < 12; index += 1) {
+    const progress = index / 11;
+    makeLayer({
+      x: -0.24 + progress * 0.2,
+      y: -0.025 + progress * 0.015,
+      z: -0.44 + progress * 0.05,
+      scale: 1.012 - progress * 0.008,
+      opacity: 0.14 + progress * 0.025,
+      color: index % 2 === 0 ? 0x3a0304 : 0xff1a1a,
+      blending: index % 2 === 0 ? THREE.NormalBlending : THREE.AdditiveBlending,
+      renderOrder: 20 + index,
+    });
+  }
+
+  makeLayer({ z: 0.16, opacity: 0.98, color: 0xffffff, blending: THREE.NormalBlending, renderOrder: 46 });
+  makeLayer({ x: 0.018, y: 0.006, z: 0.18, scale: 1.006, opacity: 0.2, color: 0xffffff, blending: THREE.AdditiveBlending, renderOrder: 47 });
+  makeLayer({ x: -0.018, y: -0.004, z: 0.19, scale: 1.012, opacity: 0.18, color: 0xff2020, blending: THREE.AdditiveBlending, renderOrder: 48 });
+
+  [
+    [-1.22, 1.28, 0.23, 0.58],
+    [0.58, 1.08, 0.26, 0.5],
+    [1.12, -0.72, 0.24, 0.42],
+  ].forEach(([x, y, z, scale], index) => {
+    const glint = createGlint(scale);
+    glint.position.set(x, y, z);
+    glint.rotation.z = index === 1 ? -0.7 : index === 2 ? 0.75 : -0.08;
+    glint.renderOrder = 60 + index;
+    glint.userData.baseScale = scale;
+    glints.push(glint);
+    group.add(glint);
+  });
+
+  [
+    [-1.55, 1.34, -0.18, -0.48, 0.48],
+    [1.58, 1.22, -0.24, 0.34, 0.42],
+    [1.55, -1.16, -0.22, -0.42, 0.38],
+    [-1.52, -1.26, -0.2, 0.52, 0.36],
+  ].forEach(([x, y, z, rz, scale], index) => {
+    const shard = createFloatingShard(scale);
+    shard.position.set(x, y, z);
+    shard.rotation.set(0.1, -0.1, rz);
+    shard.userData.basePosition = shard.position.clone();
+    shard.userData.spin = 0.25 + index * 0.07;
+    shards.push(shard);
+    group.add(shard);
+  });
+
+  group.userData.referenceMaterials = animatedMaterials;
+  group.userData.referenceGlints = glints;
+  group.userData.referenceShards = shards;
+}
+
+function animateKMark(group, t, motion) {
+  group.userData.referenceMaterials?.forEach((material, index) => {
+    const base = material.userData.baseOpacity || material.opacity;
+    material.opacity = base * (1 + Math.sin(t * 1.1 + index * 0.48) * 0.08 * motion);
+  });
+
+  group.userData.referenceGlints?.forEach((glint, index) => {
+    const pulse = 1 + Math.sin(t * 2.2 + index * 1.7) * 0.22 * motion;
+    glint.scale.setScalar(glint.userData.baseScale * pulse);
+    glint.material.opacity = 0.18 + (Math.sin(t * 2.8 + index) + 1) * 0.18 * motion;
+  });
+
+  group.userData.referenceShards?.forEach((shard, index) => {
+    const base = shard.userData.basePosition;
+    shard.position.y = base.y + Math.sin(t * 0.95 + index * 1.2) * 0.055 * motion;
+    shard.rotation.z += shard.userData.spin * 0.004 * motion;
   });
 }
 
-function bevelBoxGeometry(geometry, width, height, depth) {
-  const position = geometry.attributes.position;
-  const bevelX = width * 0.13;
-  const bevelY = height * 0.045;
-  const bevelZ = depth * 0.18;
-
-  for (let index = 0; index < position.count; index += 1) {
-    const x = position.getX(index);
-    const y = position.getY(index);
-    const z = position.getZ(index);
-    const signX = Math.sign(x) || 1;
-    const signY = Math.sign(y) || 1;
-    const signZ = Math.sign(z) || 1;
-    const cornerBias = Math.abs(x) > width * 0.22 && Math.abs(y) > height * 0.22;
-
-    position.setXYZ(
-      index,
-      x - signX * (cornerBias ? bevelX : bevelX * 0.34),
-      y - signY * (cornerBias ? bevelY : bevelY * 0.28),
-      z + signZ * (cornerBias ? bevelZ : 0)
-    );
-  }
-
-  geometry.computeVertexNormals();
-}
-
-function addShard(group, { x, y, z, rz, scale }) {
+function createFloatingShard(scale) {
   const shape = new THREE.Shape();
-  shape.moveTo(-0.42, -0.08);
-  shape.lineTo(0.36, -0.28);
-  shape.lineTo(0.18, 0.3);
-  shape.lineTo(-0.34, 0.16);
-  shape.lineTo(-0.42, -0.08);
+  shape.moveTo(-0.42, -0.1);
+  shape.lineTo(0.34, -0.24);
+  shape.lineTo(0.16, 0.28);
+  shape.lineTo(-0.34, 0.18);
+  shape.lineTo(-0.42, -0.1);
 
   const geometry = new THREE.ExtrudeGeometry(shape, {
     bevelEnabled: true,
@@ -296,12 +262,12 @@ function addShard(group, { x, y, z, rz, scale }) {
     depth: 0.06,
   });
   const material = new THREE.MeshPhysicalMaterial({
-    color: 0x160607,
+    color: 0x140405,
     clearcoat: 1,
-    emissive: 0xff1515,
-    emissiveIntensity: 0.9,
+    emissive: 0xff2020,
+    emissiveIntensity: 0.95,
     metalness: 0.35,
-    opacity: 0.78,
+    opacity: 0.68,
     roughness: 0.2,
     transparent: true,
   });
@@ -311,13 +277,11 @@ function addShard(group, { x, y, z, rz, scale }) {
     new THREE.LineBasicMaterial({ color: 0xff4545, transparent: true, opacity: 0.82 })
   );
   shard.add(outline);
-  shard.position.set(x, y, z);
-  shard.rotation.set(0.1, -0.18, rz);
   shard.scale.setScalar(scale);
-  group.add(shard);
+  return shard;
 }
 
-function addGlint(group, material, { x, y, z, rz, scale }) {
+function createGlint(scale) {
   const shape = new THREE.Shape();
   shape.moveTo(-0.48, 0);
   shape.lineTo(0.18, 0.09);
@@ -325,11 +289,19 @@ function addGlint(group, material, { x, y, z, rz, scale }) {
   shape.lineTo(0.18, -0.09);
   shape.lineTo(-0.48, 0);
 
-  const mesh = new THREE.Mesh(new THREE.ShapeGeometry(shape), material);
-  mesh.position.set(x, y, z);
-  mesh.rotation.set(0.08, -0.18, rz);
+  const mesh = new THREE.Mesh(
+    new THREE.ShapeGeometry(shape),
+    new THREE.MeshBasicMaterial({
+      blending: THREE.AdditiveBlending,
+      color: 0xffffff,
+      depthTest: false,
+      opacity: 0.34,
+      transparent: true,
+    })
+  );
+  mesh.rotation.set(0.08, -0.18, 0);
   mesh.scale.setScalar(scale);
-  group.add(mesh);
+  return mesh;
 }
 
 function buildMediaDeck(group, sceneName) {
