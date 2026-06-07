@@ -24,7 +24,11 @@ html {
 
 body {
   margin: 0;
-  background: var(--paper);
+  background:
+    linear-gradient(90deg, rgba(255, 32, 32, 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(245, 243, 234, 0.05) 1px, transparent 1px),
+    linear-gradient(135deg, #050405 0%, #0d0708 46%, #030303 100%);
+  background-size: 84px 84px, 84px 84px, auto;
   color: var(--ink);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.6;
@@ -43,15 +47,16 @@ img {
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
   padding: 16px clamp(20px, 4vw, 56px);
-  border-bottom: 1px solid var(--line);
-  background: rgba(7, 6, 7, 0.88);
-  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 32, 32, 0.16);
+  background: rgba(5, 4, 5, 0.72);
+  backdrop-filter: blur(22px) saturate(1.15);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
 }
 
 .brand,
@@ -130,6 +135,8 @@ img {
   align-items: end;
   overflow: hidden;
   padding: clamp(92px, 13vw, 160px) clamp(20px, 4vw, 56px) clamp(52px, 7vw, 90px);
+  isolation: isolate;
+  background: #050405;
 }
 
 .page-hero {
@@ -143,22 +150,54 @@ img {
 }
 
 .hero-bg {
+  z-index: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(1.22) contrast(1.08);
+  opacity: 0.38;
+  filter: saturate(1.08) contrast(1.12) brightness(0.72);
+  transform: scale(1.02);
+}
+
+.home .hero-bg {
+  opacity: 0.2;
+}
+
+.lux-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+.hero::after,
+.page-hero::after {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  content: "";
+  background:
+    linear-gradient(110deg, transparent 0 42%, rgba(255, 32, 32, 0.18) 42.2%, transparent 43%),
+    linear-gradient(90deg, rgba(245, 243, 234, 0.08) 1px, transparent 1px);
+  background-size: auto, 128px 100%;
+  opacity: 0.42;
+  pointer-events: none;
 }
 
 .hero-shade {
+  z-index: 2;
   background:
-    linear-gradient(90deg, rgba(5, 3, 4, 0.96) 0%, rgba(7, 5, 6, 0.78) 45%, rgba(10, 3, 4, 0.38) 100%),
-    linear-gradient(0deg, rgba(8, 6, 7, 0.96), rgba(8, 6, 7, 0.18) 46%, rgba(8, 6, 7, 0.56));
+    linear-gradient(90deg, rgba(5, 3, 4, 0.98) 0%, rgba(7, 5, 6, 0.72) 42%, rgba(10, 3, 4, 0.28) 100%),
+    linear-gradient(0deg, rgba(8, 6, 7, 0.98), rgba(8, 6, 7, 0.14) 48%, rgba(8, 6, 7, 0.58));
 }
 
 .hero-content {
   position: relative;
-  z-index: 1;
-  width: min(820px, 100%);
+  z-index: 3;
+  width: min(920px, 100%);
 }
 
 .hero-logo-lockup {
@@ -207,8 +246,9 @@ h3 {
 }
 
 h1 {
-  max-width: 860px;
-  font-size: clamp(4.1rem, 12vw, 9rem);
+  max-width: 980px;
+  font-size: clamp(4.1rem, 11vw, 10rem);
+  text-transform: uppercase;
 }
 
 h2 {
@@ -225,6 +265,32 @@ h3 {
   margin: 24px 0 0;
   color: #e0e4df;
   font-size: clamp(1.08rem, 2vw, 1.38rem);
+}
+
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
+  gap: clamp(18px, 3vw, 34px);
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 30px;
+  padding-block: 16px;
+  border-top: 1px solid rgba(245, 243, 234, 0.2);
+  border-bottom: 1px solid rgba(245, 243, 234, 0.14);
+}
+
+.hero-metrics span {
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.hero-metrics strong {
+  display: block;
+  color: var(--white);
+  font-size: clamp(1.35rem, 3vw, 2.15rem);
+  line-height: 1;
 }
 
 .hero-actions {
@@ -252,9 +318,9 @@ h3 {
 
 .button.primary {
   border-color: var(--acid);
-  background: var(--acid);
+  background: linear-gradient(135deg, #ff2020, #99060b);
   color: var(--white);
-  box-shadow: 0 16px 40px rgba(255, 32, 32, 0.32);
+  box-shadow: 0 20px 56px rgba(255, 32, 32, 0.34);
 }
 
 .button.secondary {
@@ -318,10 +384,12 @@ h3 {
 .about-note,
 .contact-form,
 .work-item {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(245, 243, 234, 0.14);
   border-radius: 8px;
-  background: var(--panel-soft);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025)),
+    rgba(20, 10, 12, 0.86);
+  box-shadow: 0 20px 62px rgba(0, 0, 0, 0.28);
 }
 
 .project-card,
@@ -331,11 +399,12 @@ h3 {
 
 .link-card {
   display: grid;
-  transition: transform 180ms ease, border-color 180ms ease;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
 .link-card:hover {
   border-color: rgba(255, 32, 32, 0.62);
+  box-shadow: 0 30px 82px rgba(255, 32, 32, 0.16), 0 28px 78px rgba(0, 0, 0, 0.42);
   transform: translateY(-4px);
 }
 
@@ -691,6 +760,21 @@ textarea:focus {
   .contact-form .button,
   .split-cta .button {
     width: 100%;
+  }
+
+  .lux-scene {
+    opacity: 0.62;
+  }
+
+  .hero-metrics {
+    grid-template-columns: 1fr;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .hero-metrics strong {
+    display: inline;
+    margin-right: 8px;
   }
 
   .intro-strip {

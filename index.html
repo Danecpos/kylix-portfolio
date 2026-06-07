@@ -8,7 +8,7 @@
       name="description"
       content="Portfolio Dana Petiry zaměřené na střih videí, reels, gaming edit a design náhledovek."
     >
-    <link rel="preload" href="assets/kylix-logo-source.png" as="image">
+    <link rel="preload" href="assets/edit-workstation.png" as="image">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body class="home">
@@ -32,7 +32,8 @@
 
     <main id="top">
       <section class="hero">
-        <img class="hero-bg" src="assets/kylix-logo-source.png" alt="">
+        <img class="hero-bg" src="assets/edit-workstation.png" alt="">
+        <canvas class="lux-scene" data-scene="home" aria-hidden="true"></canvas>
         <div class="hero-shade"></div>
         <div class="hero-content">
           <div class="hero-logo-lockup">
@@ -45,6 +46,11 @@
             Portfolio pro střih videí, short-form obsah, gaming highlighty a
             náhledovky, které mají rychle zaujmout.
           </p>
+          <div class="hero-metrics" aria-label="Rychlé portfolio body">
+            <span><strong>3</strong> YouTube edity</span>
+            <span><strong>7</strong> náhledovek</span>
+            <span><strong>3D</strong> vrstva</span>
+          </div>
           <div class="hero-actions">
             <a class="button primary" href="edit.html">Edit projekty</a>
             <a class="button secondary" href="design.html">Náhledovky</a>
@@ -181,6 +187,7 @@
       <a href="#top">Nahoru</a>
     </footer>
 
+    <script type="module" src="three-hero.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
