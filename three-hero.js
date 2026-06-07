@@ -88,7 +88,7 @@ function createHeroScene(canvas, reducedMotion, pointer, scroll) {
     root.rotation.y = -0.18 + Math.sin(t * 0.44) * 0.09 * motion + pointer.x * 0.13 * motion;
     root.rotation.x = -0.02 + Math.sin(t * 0.34) * 0.035 * motion - pointer.y * 0.045 * motion;
     detailGroup.rotation.z = Math.sin(t * 0.28) * 0.025 * motion;
-    kMark.rotation.y = 0.14 + scroll.turn * Math.PI * 1.08 * motion + Math.sin(t * 0.42) * 0.025 * motion;
+    kMark.rotation.y = -0.28 + scroll.turn * Math.PI * 1.12 * motion + Math.sin(t * 0.42) * 0.08 * motion;
     kMark.rotation.x = 0.04 + scroll.turn * 0.18 * motion - pointer.y * 0.05 * motion;
     kMark.rotation.z = -0.03 + pointer.x * 0.035 * motion;
     kMark.position.y = Math.sin(t * 0.65) * 0.07 * motion;
@@ -168,9 +168,6 @@ function buildKMark(sceneName) {
     transparent: true,
     opacity: 0.96,
   });
-  const referenceTexture = new THREE.TextureLoader().load("assets/kylix-k-reference-cutout.png");
-  referenceTexture.colorSpace = THREE.SRGBColorSpace;
-  referenceTexture.anisotropy = 8;
 
   const addBar = ({ width, height, depth, x, y, z = 0, rz = 0, material, bevel = true }) => {
     const geometry = new THREE.BoxGeometry(width, height, depth);
@@ -207,7 +204,6 @@ function buildKMark(sceneName) {
   addShard(group, { x: 0.88, y: 1.32, z: 0.16, rz: 0.46, scale: 0.62 });
   addShard(group, { x: 0.78, y: -1.34, z: 0.16, rz: -0.5, scale: 0.66 });
   addShard(group, { x: -0.82, y: -1.45, z: 0.16, rz: 0.4, scale: 0.54 });
-  addReferenceKFace(group, referenceTexture);
 
   const ring = new THREE.Mesh(
     new THREE.TorusGeometry(1.85, 0.012, 12, 96),
@@ -223,36 +219,6 @@ function buildKMark(sceneName) {
   group.userData.isKMark = true;
 
   return group;
-}
-
-function addReferenceKFace(group, texture) {
-  const width = 3.82;
-  const height = 3.22;
-  const geometry = new THREE.PlaneGeometry(width, height);
-  const layerSettings = [
-    { z: 0.48, x: 0.06, opacity: 0.98, color: 0xffffff, blending: THREE.NormalBlending },
-    { z: 0.34, x: 0.02, opacity: 0.28, color: 0xff2a2a, blending: THREE.AdditiveBlending },
-    { z: 0.2, x: -0.02, opacity: 0.18, color: 0x9a0508, blending: THREE.AdditiveBlending },
-  ];
-
-  layerSettings.forEach((layer, index) => {
-    const material = new THREE.MeshBasicMaterial({
-      alphaTest: 0.015,
-      blending: layer.blending,
-      color: layer.color,
-      depthTest: false,
-      depthWrite: false,
-      map: texture,
-      opacity: layer.opacity,
-      side: THREE.DoubleSide,
-      transparent: true,
-    });
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(layer.x, -0.02, layer.z);
-    mesh.rotation.set(0.015, -0.025, 0.01);
-    mesh.renderOrder = 30 + index;
-    group.add(mesh);
-  });
 }
 
 function bevelBoxGeometry(geometry, width, height, depth) {
