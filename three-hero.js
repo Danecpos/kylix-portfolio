@@ -129,55 +129,23 @@ function createHeroScene(canvas, reducedMotion, pointer, scroll) {
 function buildKMark(sceneName) {
   const group = new THREE.Group();
   const compact = sceneName !== "home";
-  const referenceTexture = new THREE.TextureLoader().load("assets/kylix-3d-mark.png");
+  const referenceTexture = new THREE.TextureLoader().load("assets/kylix-k-reference-cutout.png");
   referenceTexture.colorSpace = THREE.SRGBColorSpace;
   referenceTexture.anisotropy = 8;
 
-  addArtworkModule(group, referenceTexture);
+  addReferenceKModel(group, referenceTexture);
 
-  group.position.set(compact ? 1.58 : 0.82, compact ? 0.08 : -0.04, compact ? 0.42 : 0.68);
-  group.scale.setScalar(compact ? 0.72 : 0.82);
+  group.position.set(compact ? 1.08 : 0.42, compact ? 0.08 : -0.04, compact ? 0.5 : 0.82);
+  group.scale.setScalar(compact ? 0.9 : 0.96);
   group.rotation.set(0.035, -0.05, -0.025);
   group.userData.isKMark = true;
 
   return group;
 }
 
-function addArtworkModule(group, texture) {
-  const width = 4.72;
-  const height = 2.66;
-  const frameMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0x0c0305,
-    clearcoat: 1,
-    clearcoatRoughness: 0.18,
-    emissive: 0x360405,
-    emissiveIntensity: 0.75,
-    metalness: 0.55,
-    roughness: 0.22,
-  });
-  const edgeMaterial = new THREE.MeshStandardMaterial({
-    color: 0xff2020,
-    emissive: 0xff1515,
-    emissiveIntensity: 1.4,
-    metalness: 0.35,
-    roughness: 0.28,
-  });
-  const backplate = new THREE.Mesh(new THREE.BoxGeometry(width + 0.16, height + 0.16, 0.18), frameMaterial);
-  backplate.position.z = -0.28;
-  backplate.renderOrder = 10;
-  group.add(backplate);
-
-  [
-    [0, height / 2 + 0.09, -0.15, width + 0.18, 0.035, 0.12],
-    [0, -height / 2 - 0.09, -0.15, width + 0.18, 0.035, 0.12],
-    [-width / 2 - 0.09, 0, -0.15, 0.035, height + 0.18, 0.12],
-    [width / 2 + 0.09, 0, -0.15, 0.035, height + 0.18, 0.12],
-  ].forEach(([x, y, z, w, h, d]) => {
-    const edge = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), edgeMaterial);
-    edge.position.set(x, y, z);
-    group.add(edge);
-  });
-
+function addReferenceKModel(group, texture) {
+  const width = 3.96;
+  const height = 3.34;
   const geometry = new THREE.PlaneGeometry(width, height);
   const animatedMaterials = [];
   const glints = [];
@@ -205,17 +173,17 @@ function addArtworkModule(group, texture) {
     return mesh;
   };
 
-  makeLayer({ z: -0.62, scale: 1.08, opacity: 0.22, color: 0xff2020, blending: THREE.AdditiveBlending, renderOrder: 18 });
-  makeLayer({ z: -0.48, scale: 1.04, opacity: 0.3, color: 0xff1010, blending: THREE.AdditiveBlending, renderOrder: 19 });
+  makeLayer({ z: -0.62, scale: 1.2, opacity: 0.16, color: 0xff2020, blending: THREE.AdditiveBlending, renderOrder: 18 });
+  makeLayer({ z: -0.5, scale: 1.1, opacity: 0.26, color: 0xff1010, blending: THREE.AdditiveBlending, renderOrder: 19 });
 
   for (let index = 0; index < 12; index += 1) {
     const progress = index / 11;
     makeLayer({
-      x: -0.18 + progress * 0.16,
+      x: -0.24 + progress * 0.2,
       y: -0.025 + progress * 0.015,
       z: -0.44 + progress * 0.05,
-      scale: 1.006 - progress * 0.005,
-      opacity: 0.1 + progress * 0.018,
+      scale: 1.012 - progress * 0.008,
+      opacity: 0.14 + progress * 0.025,
       color: index % 2 === 0 ? 0x3a0304 : 0xff1a1a,
       blending: index % 2 === 0 ? THREE.NormalBlending : THREE.AdditiveBlending,
       renderOrder: 20 + index,
@@ -227,9 +195,9 @@ function addArtworkModule(group, texture) {
   makeLayer({ x: -0.018, y: -0.004, z: 0.19, scale: 1.012, opacity: 0.18, color: 0xff2020, blending: THREE.AdditiveBlending, renderOrder: 48 });
 
   [
-    [-0.78, 1.08, 0.26, 0.52],
-    [0.76, 1.02, 0.29, 0.5],
-    [1.32, -0.62, 0.27, 0.42],
+    [-1.22, 1.28, 0.23, 0.58],
+    [0.58, 1.08, 0.26, 0.5],
+    [1.12, -0.72, 0.24, 0.42],
   ].forEach(([x, y, z, scale], index) => {
     const glint = createGlint(scale);
     glint.position.set(x, y, z);
@@ -241,10 +209,10 @@ function addArtworkModule(group, texture) {
   });
 
   [
-    [-2.15, 1.14, -0.16, -0.48, 0.42],
-    [2.16, 1.0, -0.22, 0.34, 0.38],
-    [2.0, -1.0, -0.22, -0.42, 0.34],
-    [-2.04, -1.02, -0.18, 0.52, 0.32],
+    [-1.55, 1.34, -0.18, -0.48, 0.48],
+    [1.58, 1.22, -0.24, 0.34, 0.42],
+    [1.55, -1.16, -0.22, -0.42, 0.38],
+    [-1.52, -1.26, -0.2, 0.52, 0.36],
   ].forEach(([x, y, z, rz, scale], index) => {
     const shard = createFloatingShard(scale);
     shard.position.set(x, y, z);
